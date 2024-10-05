@@ -1,4 +1,4 @@
-package com.example.localmessage.feature.stateholder
+package com.example.localmessage.feature.message.stateholder
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,8 +6,8 @@ import com.example.data.onFailure
 import com.example.data.onSuccess
 import com.example.data.repository.NSDRepository
 import com.example.data.repository.TestRepository
-import com.example.localmessage.feature.uistatemodel.HistoryItemUIState
-import com.example.localmessage.feature.uistatemodel.NSDServiceItemUIState
+import com.example.localmessage.feature.message.uistatemodel.HistoryItemUIState
+import com.example.localmessage.feature.message.uistatemodel.NSDServiceItemUIState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MainViewModel(
+class HomeViewModel(
     private val nsdRepository: NSDRepository,
     private val testRepository: TestRepository
 ): ViewModel() {

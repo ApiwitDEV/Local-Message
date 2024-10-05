@@ -8,7 +8,7 @@ class DNSBaseService {
 
     private val serviceList = mutableListOf<DiscoveryServiceResult>()
 
-    private val _serviceListFlow = MutableSharedFlow<List<DiscoveryServiceResult>>()
+    private val _serviceListFlow = MutableSharedFlow<List<DiscoveryServiceResult>>(replay = 1)
     val serviceListFlow = _serviceListFlow.asSharedFlow()
 
     fun collectDiscoveryService(service: DiscoveryServiceResult) {

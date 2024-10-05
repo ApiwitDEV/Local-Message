@@ -1,8 +1,8 @@
-package com.example.localmessage.feature.stateholder
+package com.example.localmessage.feature.message.stateholder
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import com.example.localmessage.feature.uistatemodel.NSDServiceItemUIState
+import com.example.localmessage.feature.message.uistatemodel.NSDServiceItemUIState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi

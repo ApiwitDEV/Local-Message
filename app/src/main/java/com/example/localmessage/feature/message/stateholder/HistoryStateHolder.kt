@@ -1,8 +1,8 @@
-package com.example.localmessage.feature.stateholder
+package com.example.localmessage.feature.message.stateholder
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import com.example.localmessage.feature.uistatemodel.HistoryItemUIState
+import com.example.localmessage.feature.message.uistatemodel.HistoryItemUIState
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable

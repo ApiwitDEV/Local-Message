@@ -2,11 +2,9 @@ package com.example.localmessage.ui
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.localmessage.ui.navigation.DestinationRoute
 
 @Composable
 fun rememberAppUIStateHolder(context: Context, navController: NavHostController = rememberNavController()): AppUIStateHolder {
@@ -22,11 +20,8 @@ class AppUIStateHolder(
 
     val appOrientation = context.resources.configuration.orientation
 
-    val currentPage = mutableStateOf(navController.currentBackStackEntry?.destination?.route ?: DestinationRoute.MAIN.name)
-
-    fun navigateTo(destination: DestinationRoute) {
-        currentPage.value = destination.name
-        navController.navigate(destination.name) {
+    fun navigateTo(destination: String) {
+        navController.navigate(destination) {
             popUpTo(0) {
                 inclusive = true
             }

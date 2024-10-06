@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -20,17 +19,25 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.localmessage.ui.AppViewModel
 import com.example.localmessage.ui.navigation.DestinationRoute
 import com.example.localmessage.ui.navigation.MainNavigation
 import com.example.localmessage.ui.rememberAppUIStateHolder
 import com.example.localmessage.ui.theme.LocalMessageTheme
+import kotlinx.coroutines.flow.collectLatest
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
+
+    private val appViewModel by viewModel<AppViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -39,6 +46,11 @@ class MainActivity : ComponentActivity() {
                 val context = LocalContext.current
                 val focusManager = LocalFocusManager.current
                 val appUIStateHolder = rememberAppUIStateHolder(context)
+                LaunchedEffect(null) {
+                    appViewModel.currentPage.collectLatest { destination ->
+                        appUIStateHolder.navigateTo(destination)
+                    }
+                }
                 when(appUIStateHolder.appOrientation) {
                     Configuration.ORIENTATION_PORTRAIT -> {
                         Scaffold(
@@ -49,15 +61,15 @@ class MainActivity : ComponentActivity() {
                             bottomBar = {
                                 NavigationBar {
                                     NavigationBarItem(
-                                        selected = appUIStateHolder.currentPage.value == DestinationRoute.MAIN.name,
-                                        onClick = { appUIStateHolder.navigateTo(DestinationRoute.MAIN) },
+                                        selected = appViewModel.currentPage.collectAsStateWithLifecycle().value == DestinationRoute.MAIN.name,
+                                        onClick = { appViewModel.updateCurrentPage(DestinationRoute.MAIN) },
                                         icon = {
                                             Icon(painter = painterResource(id = R.drawable.baseline_message_24), contentDescription = null)
                                         }
                                     )
                                     NavigationBarItem(
-                                        selected = appUIStateHolder.currentPage.value == DestinationRoute.HISTORY.name,
-                                        onClick = { appUIStateHolder.navigateTo(DestinationRoute.HISTORY) },
+                                        selected = appViewModel.currentPage.collectAsStateWithLifecycle().value == DestinationRoute.HISTORY.name,
+                                        onClick = { appViewModel.updateCurrentPage(DestinationRoute.HISTORY) },
                                         icon = {
                                             Icon(painter = painterResource(id = R.drawable.baseline_assignment_24), contentDescription = null)
                                         }
@@ -87,15 +99,15 @@ class MainActivity : ComponentActivity() {
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     NavigationRailItem(
-                                        selected = appUIStateHolder.currentPage.value == DestinationRoute.MAIN.name,
-                                        onClick = { appUIStateHolder.navigateTo(DestinationRoute.MAIN) },
+                                        selected = appViewModel.currentPage.collectAsStateWithLifecycle().value == DestinationRoute.MAIN.name,
+                                        onClick = { appViewModel.updateCurrentPage(DestinationRoute.MAIN) },
                                         icon = {
                                             Icon(painter = painterResource(id = R.drawable.baseline_message_24), contentDescription = null)
                                         }
                                     )
                                     NavigationRailItem(
-                                        selected = appUIStateHolder.currentPage.value == DestinationRoute.HISTORY.name,
-                                        onClick = { appUIStateHolder.navigateTo(DestinationRoute.HISTORY) },
+                                        selected = appViewModel.currentPage.collectAsStateWithLifecycle().value == DestinationRoute.HISTORY.name,
+                                        onClick = { appViewModel.updateCurrentPage(DestinationRoute.HISTORY) },
                                         icon = {
                                             Icon(painter = painterResource(id = R.drawable.baseline_assignment_24), contentDescription = null)
                                         }

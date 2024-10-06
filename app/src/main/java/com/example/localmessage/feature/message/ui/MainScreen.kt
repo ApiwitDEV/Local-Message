@@ -244,7 +244,10 @@ private fun ServiceList(
     serviceListStateHolder: ServiceListStateHolder,
 ) {
     val uiState = serviceListStateHolder.uiState.collectAsStateWithLifecycle().value
-    LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         items(uiState) {
             ServiceItem(
                 item = it,

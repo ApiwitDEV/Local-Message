@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -112,8 +114,16 @@ private fun LandscapeContent(
     val density = LocalDensity.current
     var pageWidth by remember { mutableStateOf(0.dp) }
     var offsetX by remember { mutableFloatStateOf(0f) }
-    Scaffold(
+    val serviceListState = rememberServiceListState(
+        serviceList = serviceList,
+        scope = scope,
+        onSelectService = onSelectService
+    )
+    Row(
         modifier = Modifier
+            .systemBarsPadding()
+            .navigationBarsPadding()
+            .padding(vertical = 16.dp)
             .onSizeChanged { value ->
                 pageWidth = with(density) {
                     value.width.toDp()
@@ -121,55 +131,44 @@ private fun LandscapeContent(
                 offsetX = pageWidth.value
             }
             .fillMaxSize()
-    ) { innerPadding ->
-        val serviceListState = rememberServiceListState(
-            serviceList = serviceList,
-            scope = scope,
-            onSelectService = onSelectService
-        )
-        Row(
+    ) {
+        Box(modifier = Modifier.width(with(density){offsetX.toDp()})) {
+            ServiceList(serviceListStateHolder = serviceListState)
+        }
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+                .fillMaxHeight()
+                .padding(vertical = 16.dp)
+                .align(Alignment.CenterVertically)
         ) {
-            Box(modifier = Modifier.width(with(density){offsetX.toDp()})) {
-                ServiceList(serviceListStateHolder = serviceListState)
-            }
-            Box(
+            Card(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .padding(vertical = 16.dp)
-                    .align(Alignment.CenterVertically)
-            ) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .align(Alignment.Center)
-                        .background(Color.LightGray)
-                        .width(4.dp)
-                ){}
-                Card(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .fillMaxHeight(0.2f)
-                        .width(24.dp)
-                        .align(Alignment.Center)
-                        .pointerInput(Unit) {
-                            detectDragGestures { change, dragAmount ->
-                                change.consume()
-                                Log.d("bas test", dragAmount.x.toString())
-                                offsetX += dragAmount.x
-                            }
-                        },
-                    colors = CardDefaults.cardColors(containerColor = Color.LightGray),
-                ){}
-            }
-            ServiceDetail(
-                modifier = Modifier.width(pageWidth - with(density){offsetX.toDp()}),
-                onRequestClick = onRequestClick,
-                history = historyList
-            )
+                    .align(Alignment.Center)
+                    .background(Color.LightGray)
+                    .width(4.dp)
+            ){}
+            Card(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .fillMaxHeight(0.2f)
+                    .width(24.dp)
+                    .align(Alignment.Center)
+                    .pointerInput(Unit) {
+                        detectDragGestures { change, dragAmount ->
+                            change.consume()
+                            Log.d("bas test", dragAmount.x.toString())
+                            offsetX += dragAmount.x
+                        }
+                    },
+                colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+            ){}
         }
+        ServiceDetail(
+            modifier = Modifier.width(pageWidth - with(density){offsetX.toDp()}),
+            onRequestClick = onRequestClick,
+            history = historyList
+        )
     }
 }
 
@@ -184,8 +183,14 @@ private fun PortraitContent(
     val density = LocalDensity.current
     var pageHeight by remember { mutableStateOf(0.dp) }
     var offsetY by remember { mutableFloatStateOf(0f) }
-    Scaffold(
+    val serviceListState = rememberServiceListState(
+        serviceList = serviceList,
+        scope = scope,
+        onSelectService = onSelectService
+    )
+    Column(
         modifier = Modifier
+            .padding(vertical = 16.dp)
             .onSizeChanged { value ->
                 pageHeight = with(density) {
                     value.height.toDp()
@@ -193,55 +198,44 @@ private fun PortraitContent(
                 offsetY = pageHeight.value
             }
             .fillMaxSize()
-    ) { innerPadding ->
-        val serviceListState = rememberServiceListState(
-            serviceList = serviceList,
-            scope = scope,
-            onSelectService = onSelectService
-        )
-        Column(
+    ) {
+        Box(modifier = Modifier.height(with(density){offsetY.toDp()})) {
+            ServiceList(serviceListStateHolder = serviceListState)
+        }
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .align(Alignment.CenterHorizontally)
         ) {
-            Box(modifier = Modifier.height(with(density){offsetY.toDp()})) {
-                ServiceList(serviceListStateHolder = serviceListState)
-            }
-            Box(
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .align(Alignment.CenterHorizontally)
-            ) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.Center)
-                        .background(Color.LightGray)
-                        .height(4.dp)
-                ){}
-                Card(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .fillMaxWidth(0.2f)
-                        .height(24.dp)
-                        .align(Alignment.Center)
-                        .pointerInput(Unit) {
-                            detectDragGestures { change, dragAmount ->
-                                change.consume()
-                                Log.d("bas test", dragAmount.y.toString())
-                                offsetY += dragAmount.y
-                            }
-                        },
-                    colors = CardDefaults.cardColors(containerColor = Color.LightGray),
-                ){}
-            }
-            ServiceDetail(
-                modifier = Modifier.height(pageHeight - with(density){offsetY.toDp()}),
-                onRequestClick = onRequestClick,
-                history = historyList
-            )
+                    .align(Alignment.Center)
+                    .background(Color.LightGray)
+                    .height(4.dp)
+            ){}
+            Card(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .fillMaxWidth(0.2f)
+                    .height(24.dp)
+                    .align(Alignment.Center)
+                    .pointerInput(Unit) {
+                        detectDragGestures { change, dragAmount ->
+                            change.consume()
+                            Log.d("bas test", dragAmount.y.toString())
+                            offsetY += dragAmount.y
+                        }
+                    },
+                colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+            ){}
         }
+        ServiceDetail(
+            modifier = Modifier.height(pageHeight - with(density){offsetY.toDp()}),
+            onRequestClick = onRequestClick,
+            history = historyList
+        )
     }
 }
 

@@ -10,8 +10,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
@@ -35,15 +38,30 @@ class MainActivity : ComponentActivity() {
                     Configuration.ORIENTATION_PORTRAIT -> {
                         Scaffold(
                             bottomBar = {
-
+                                NavigationBar {
+                                    NavigationBarItem(
+                                        selected = appUIStateHolder.currentPage.value == DestinationRoute.MAIN.name,
+                                        onClick = { appUIStateHolder.navigateTo(DestinationRoute.MAIN) },
+                                        icon = {
+                                            Icon(painter = painterResource(id = R.drawable.baseline_message_24), contentDescription = null)
+                                        }
+                                    )
+                                    NavigationBarItem(
+                                        selected = appUIStateHolder.currentPage.value == DestinationRoute.HISTORY.name,
+                                        onClick = { appUIStateHolder.navigateTo(DestinationRoute.HISTORY) },
+                                        icon = {
+                                            Icon(painter = painterResource(id = R.drawable.baseline_assignment_24), contentDescription = null)
+                                        }
+                                    )
+                                }
                             }
                         ) { paddingValue ->
                             Box(
                                 modifier = Modifier
-                                .padding(
-                                    top = paddingValue.calculateTopPadding(),
-                                    bottom = paddingValue.calculateBottomPadding()
-                                )
+                                    .padding(
+                                        top = paddingValue.calculateTopPadding(),
+                                        bottom = paddingValue.calculateBottomPadding()
+                                    )
                             ) {
                                 MainNavigation(appUIStateHolder)
                             }
@@ -67,7 +85,7 @@ class MainActivity : ComponentActivity() {
                                         selected = appUIStateHolder.currentPage.value == DestinationRoute.HISTORY.name,
                                         onClick = { appUIStateHolder.navigateTo(DestinationRoute.HISTORY) },
                                         icon = {
-                                            Icon(painter = painterResource(id = R.drawable.baseline_access_time_24), contentDescription = null)
+                                            Icon(painter = painterResource(id = R.drawable.baseline_assignment_24), contentDescription = null)
                                         }
                                     )
                                 }

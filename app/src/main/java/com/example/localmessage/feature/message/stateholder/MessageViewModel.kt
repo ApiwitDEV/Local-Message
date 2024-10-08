@@ -27,10 +27,8 @@ class MessageViewModel(
     private val _serviceList = MutableStateFlow(listOf<NSDServiceItemUIState>())
     val serviceList = _serviceList.asStateFlow()
 
-    private val _historyList = MutableStateFlow(listOf<HistoryItemUIState>())
-    val historyList = _historyList.asStateFlow()
-
-    private var _selectedReceiver = ""
+    private val _chatList = MutableStateFlow(listOf<HistoryItemUIState>())
+    val chatList = _chatList.asStateFlow()
 
     fun findLocalNetworkService() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -56,8 +54,8 @@ class MessageViewModel(
                 .forEach { response ->
                     response
                         .onSuccess {
-                            _historyList.update {
-                                val newHistoryList = _historyList.value.toMutableList()
+                            _chatList.update {
+                                val newHistoryList = _chatList.value.toMutableList()
                                 newHistoryList.add(
                                     HistoryItemUIState(
                                         domainName = "",
@@ -77,7 +75,6 @@ class MessageViewModel(
     }
 
     fun selectService(ipAddress: String) {
-        _selectedReceiver = ipAddress
         testRepository.setIpAddressToSend(listOf(ipAddress))
     }
 
@@ -86,8 +83,8 @@ class MessageViewModel(
             serverRepository.subscribeMessageFromOther()
                 .collect { message ->
                     Log.d("bas test", message.toString())
-                    _historyList.update {
-                        val newHistoryList = _historyList.value.toMutableList()
+                    _chatList.update {
+                        val newHistoryList = _chatList.value.toMutableList()
                         newHistoryList.add(
                             HistoryItemUIState(
                                 domainName = "",

@@ -23,12 +23,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,7 +51,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.localmessage.R
 import com.example.localmessage.feature.message.stateholder.HistoryStateHolder
@@ -78,7 +85,7 @@ fun MessageScreen(
         Configuration.ORIENTATION_LANDSCAPE -> LandscapeContent(
             scope = scope,
             serviceList = viewModel.serviceList.collectAsStateWithLifecycle().value,
-            historyList = viewModel.historyList,
+            historyList = viewModel.chatList,
             onSelectService = {
                 viewModel.selectService(it)
             },
@@ -89,7 +96,7 @@ fun MessageScreen(
         Configuration.ORIENTATION_PORTRAIT -> PortraitContent(
             scope = scope,
             serviceList = viewModel.serviceList.collectAsStateWithLifecycle().value,
-            historyList = viewModel.historyList,
+            chatList = viewModel.chatList,
             onSelectService = {
                 viewModel.selectService(it)
             },
@@ -115,10 +122,13 @@ private fun LandscapeContent(
     val serviceListState = rememberServiceListState(
         serviceList = serviceList,
         scope = scope,
-        onSelectService = onSelectService
+        onSelectService = {
+            onSelectService(it)
+        }
     )
     Row(
         modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.background)
             .systemBarsPadding()
             .navigationBarsPadding()
             .padding(vertical = 16.dp)
@@ -162,11 +172,15 @@ private fun LandscapeContent(
                 colors = CardDefaults.cardColors(containerColor = Color.LightGray),
             ){}
         }
-        ServiceDetail(
-            modifier = Modifier.width(pageWidth - with(density){offsetX.toDp()}),
-            onRequestClick = onRequestClick,
-            history = historyList
-        )
+        serviceListState.selectedService.collectAsStateWithLifecycle().value?.let {
+            Box(modifier = Modifier.width(pageWidth - with(density){offsetX.toDp()})) {
+                ServiceDetail(
+                    selectedService = it,
+                    onRequestClick = onRequestClick,
+                    chatList = historyList
+                )
+            }
+        }
     }
 }
 
@@ -174,7 +188,7 @@ private fun LandscapeContent(
 private fun PortraitContent(
     scope: CoroutineScope,
     serviceList: List<NSDServiceItemUIState>,
-    historyList: StateFlow<List<HistoryItemUIState>>,
+    chatList: StateFlow<List<HistoryItemUIState>>,
     onSelectService: (String) -> Unit,
     onRequestClick: (String) -> Unit
 ) {
@@ -229,11 +243,15 @@ private fun PortraitContent(
                 colors = CardDefaults.cardColors(containerColor = Color.LightGray),
             ){}
         }
-        ServiceDetail(
-            modifier = Modifier.height(pageHeight - with(density){offsetY.toDp()}),
-            onRequestClick = onRequestClick,
-            history = historyList
-        )
+        serviceListState.selectedService.collectAsStateWithLifecycle().value?.let {
+            Box(modifier = Modifier.height(pageHeight - with(density){offsetY.toDp()})) {
+                ServiceDetail(
+                    selectedService = it,
+                    onRequestClick = onRequestClick,
+                    chatList = chatList
+                )
+            }
+        }
     }
 }
 
@@ -277,41 +295,69 @@ private fun ServiceItem(item: NSDServiceItemUIState, onClick: (String, String) -
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ServiceDetail(
-    modifier: Modifier,
+    selectedService: NSDServiceItemUIState,
     onRequestClick: (String) -> Unit,
-    history: StateFlow<List<HistoryItemUIState>>
+    chatList: StateFlow<List<HistoryItemUIState>>
 ) {
     val scope = rememberCoroutineScope()
-    val historyState = rememberHistoryState(history)
+    val historyState = rememberHistoryState(chatList)
     val serviceActionState = rememberServiceActionState(
         scope = scope,
         onRequestClick = onRequestClick
     )
-    val density = LocalDensity.current
-    var padding by remember { mutableStateOf(0.dp) }
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-    ) {
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(bottom = padding)
-        ) {
-            History(historyState)
-        }
-        Box(modifier = Modifier
-            .align(Alignment.BottomCenter)
-            .onSizeChanged {
-                padding = with(density) {
-                    it.height.toDp()
-                }
+    var isShowDropdown by remember { mutableStateOf(false) }
+    Scaffold(
+        topBar = {
+            Column {
+                TopAppBar(
+                    title = {
+                        Column {
+                            Text(
+                                text = selectedService.domainName,
+                                fontSize = 20.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Text(
+                                text = selectedService.ipAddress,
+                                fontSize = 20.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { isShowDropdown = true }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_more_vert_24),
+                                contentDescription = null
+                            )
+                        }
+                        DropdownMenu(expanded = isShowDropdown, onDismissRequest = { isShowDropdown = false }) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = "Clear Chat")
+                                },
+                                onClick = {
+
+                                }
+                            )
+                        }
+                    }
+                )
+                HorizontalDivider()
             }
-        ) {
+        },
+        bottomBar = {
             HorizontalDivider()
             ServiceAction(serviceActionStateHolder = serviceActionState)
+        }
+    ) {
+        Box(modifier = Modifier.padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding())) {
+            History(historyState)
         }
     }
 }

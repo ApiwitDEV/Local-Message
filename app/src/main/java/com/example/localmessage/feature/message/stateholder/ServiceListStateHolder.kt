@@ -32,9 +32,16 @@ class ServiceListStateHolder(
     private val _serviceList = MutableStateFlow(originalServiceList)
     val uiState = _serviceList.asStateFlow()
 
+    private val _selectedService = MutableStateFlow<NSDServiceItemUIState?>(null)
+    val selectedService = _selectedService.asStateFlow()
+
+
     fun onItemClicked(domainName: String, ipAddress: String) {
         scope.launch(newSingleThreadContext("")) {
             _serviceList.value = originalServiceList.map { item ->
+                if (item.domainName == domainName) {
+                    _selectedService.value = item
+                }
                 item.copy(isSelect = item.domainName == domainName)
             }
         }

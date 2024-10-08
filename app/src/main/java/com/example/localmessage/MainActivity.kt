@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -22,9 +23,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.localmessage.ui.AppViewModel
 import com.example.localmessage.ui.navigation.DestinationRoute
@@ -59,8 +62,11 @@ class MainActivity : ComponentActivity() {
                                 indication = null
                             ) { focusManager.clearFocus() },
                             bottomBar = {
-                                NavigationBar {
+                                NavigationBar(
+                                    modifier = Modifier.fillMaxHeight(0.125f)
+                                ) {
                                     NavigationBarItem(
+                                        modifier = Modifier.fillMaxHeight(1f),
                                         selected = appViewModel.currentPage.collectAsStateWithLifecycle().value == DestinationRoute.MAIN.name,
                                         onClick = { appViewModel.updateCurrentPage(DestinationRoute.MAIN) },
                                         icon = {
@@ -68,6 +74,7 @@ class MainActivity : ComponentActivity() {
                                         }
                                     )
                                     NavigationBarItem(
+                                        modifier = Modifier.fillMaxHeight(1f),
                                         selected = appViewModel.currentPage.collectAsStateWithLifecycle().value == DestinationRoute.HISTORY.name,
                                         onClick = { appViewModel.updateCurrentPage(DestinationRoute.HISTORY) },
                                         icon = {

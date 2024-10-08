@@ -10,6 +10,10 @@ import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.ANDROID
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.plugin
 import io.ktor.client.request.parameter
 import io.ktor.client.request.request
@@ -28,6 +32,10 @@ class LocalService(private val dnsBaseService: DNSBaseService) {
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
             json()
+        }
+        install(Logging) {
+            logger = Logger.ANDROID
+            level = LogLevel.ALL
         }
     }.apply {
         plugin(HttpSend).intercept { request ->

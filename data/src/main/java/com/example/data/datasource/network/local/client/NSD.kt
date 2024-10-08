@@ -17,6 +17,8 @@ class NSD(private val dnsBaseService: DNSBaseService, private val port: Int, pri
     private val httpTcpServiceType = "_http._tcp."
 //    private val printerTcpServiceType = "_ipp._tcp."
 
+    val myServiceName = "MODEL: ${Build.MODEL} ID: ${Build.ID}"
+
     private val tag = "NSD log"
 
     fun initialize() = callbackFlow {
@@ -96,7 +98,7 @@ class NSD(private val dnsBaseService: DNSBaseService, private val port: Int, pri
         val serviceInfo = NsdServiceInfo().apply {
             // The name is subject to change based on conflicts
             // with other services advertised on the same network.
-            serviceName = "MODEL: ${Build.MODEL} ID: ${Build.ID}"
+            serviceName = myServiceName
             serviceType = httpTcpServiceType
             port = this@NSD.port
         }

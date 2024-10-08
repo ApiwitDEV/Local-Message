@@ -1,29 +1,28 @@
 package com.example.localmessage.feature.message.stateholder
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.onFailure
 import com.example.data.onSuccess
 import com.example.data.repository.NSDRepository
+import com.example.data.repository.ServerRepository
 import com.example.data.repository.TestRepository
 import com.example.localmessage.feature.message.uistatemodel.HistoryItemUIState
 import com.example.localmessage.feature.message.uistatemodel.NSDServiceItemUIState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class HomeViewModel(
+class MessageViewModel(
     private val nsdRepository: NSDRepository,
-    private val testRepository: TestRepository
+    private val testRepository: TestRepository,
+    private val serverRepository: ServerRepository
 ): ViewModel() {
-
-    private val _response = MutableStateFlow("")
-    val response: StateFlow<String> = _response
 
     private val _serviceList = MutableStateFlow(listOf<NSDServiceItemUIState>())
     val serviceList = _serviceList.asStateFlow()
@@ -57,24 +56,21 @@ class HomeViewModel(
                 .forEach { response ->
                     response
                         .onSuccess {
-                            _response.value = it
                             _historyList.update {
-                                val x = _historyList.value.toMutableList()
-                                x.add(
+                                val newHistoryList = _historyList.value.toMutableList()
+                                newHistoryList.add(
                                     HistoryItemUIState(
                                         domainName = "",
-                                        ipAddress = "you",
-                                        responseMessage = "",
-                                        requestMessage = message,
-                                        sender = "",
-                                        type = "request"
+                                        ipAddress = "",
+                                        message = message,
+                                        sender = "you",
+                                        type = "to_other"
                                     )
                                 )
-                                x
+                                newHistoryList
                             }
                         }
                         .onFailure {
-                            _response.value = it.message.toString()
                         }
                 }
         }
@@ -85,26 +81,26 @@ class HomeViewModel(
         testRepository.setIpAddressToSend(listOf(ipAddress))
     }
 
-//    fun subscribeResponse() {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            testRepository.subscribeResponse()
-//                .collectLatest { response ->
-//                    _historyList.update {
-//                        val x = _historyList.value.toMutableList()
-//                        x.add(
-//                            HistoryItemUIState(
-//                                domainName = "",
-//                                ipAddress = _selectedReceiver,
-//                                responseMessage = response,
-//                                requestMessage = "",
-//                                sender = "",
-//                                type = "response"
-//                            )
-//                        )
-//                        x
-//                    }
-//                }
-//        }
-//    }
+    fun subscribeMessageFromOther() {
+        viewModelScope.launch(Dispatchers.IO) {
+            serverRepository.subscribeMessageFromOther()
+                .collect { message ->
+                    Log.d("bas test", message.toString())
+                    _historyList.update {
+                        val newHistoryList = _historyList.value.toMutableList()
+                        newHistoryList.add(
+                            HistoryItemUIState(
+                                domainName = "",
+                                ipAddress = "",
+                                message = message.test,
+                                sender = message.sender,
+                                type = "from_other"
+                            )
+                        )
+                        newHistoryList
+                    }
+                }
+        }
+    }
 
 }

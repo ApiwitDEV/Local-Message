@@ -18,19 +18,16 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,7 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.localmessage.R
 import com.example.localmessage.feature.message.stateholder.HistoryStateHolder
-import com.example.localmessage.feature.message.stateholder.HomeViewModel
+import com.example.localmessage.feature.message.stateholder.MessageViewModel
 import com.example.localmessage.feature.message.stateholder.ServiceActionStateHolder
 import com.example.localmessage.feature.message.stateholder.ServiceListStateHolder
 import com.example.localmessage.feature.message.stateholder.rememberHistoryState
@@ -67,13 +64,14 @@ import kotlinx.coroutines.flow.StateFlow
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MainScreen(
+fun MessageScreen(
     appStateHolder: AppUIStateHolder,
-    viewModel: HomeViewModel = koinViewModel()
+    viewModel: MessageViewModel = koinViewModel()
 ) {
     val scope = rememberCoroutineScope()
     LaunchedEffect(key1 = null) {
         viewModel.findLocalNetworkService()
+        viewModel.subscribeMessageFromOther()
     }
 
     when(appStateHolder.appOrientation) {
@@ -291,12 +289,30 @@ private fun ServiceDetail(
         scope = scope,
         onRequestClick = onRequestClick
     )
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween
+    val density = LocalDensity.current
+    var padding by remember { mutableStateOf(0.dp) }
+    Box(
+        modifier = modifier
+            .fillMaxSize()
     ) {
-        History(historyState)
-        ServiceAction(serviceActionStateHolder = serviceActionState)
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(bottom = padding)
+        ) {
+            History(historyState)
+        }
+        Box(modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .onSizeChanged {
+                padding = with(density) {
+                    it.height.toDp()
+                }
+            }
+        ) {
+            HorizontalDivider()
+            ServiceAction(serviceActionStateHolder = serviceActionState)
+        }
     }
 }
 
@@ -326,9 +342,9 @@ private fun ServiceAction(serviceActionStateHolder: ServiceActionStateHolder) {
                 .weight(1f),
             value = uiState,
             onValueChange = serviceActionStateHolder::setText,
-            shape = CircleShape,
-            placeholder = {
-                Text(text = "message")
+            shape = RoundedCornerShape(25),
+            label = {
+                Text(text = "Message")
             }
         )
         Spacer(modifier = Modifier.width(16.dp))
@@ -365,24 +381,14 @@ private fun HistoryItem(item: HistoryItemUIState) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
-        horizontalArrangement = if (item.type == "response") Arrangement.Start else Arrangement.End
+        horizontalArrangement = if (item.type == "from_other") Arrangement.Start else Arrangement.End
     ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(0.75f)
-        ) {
+        Card {
             Column(
                 modifier = Modifier.padding(8.dp)
             ) {
-                Text(text = item.ipAddress)
-                Text(
-                    text = if (item.type == "response") {
-                        item.responseMessage
-                    }
-                    else {
-                        item.requestMessage
-                    }
-                )
+                Text(text = item.sender)
+                Text(text = item.message)
             }
         }
     }

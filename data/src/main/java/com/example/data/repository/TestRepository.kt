@@ -2,28 +2,13 @@ package com.example.data.repository
 
 import com.example.data.ResultData
 import com.example.data.datasource.network.local.client.LocalService
+import com.example.data.datasource.network.local.client.NSD
 import com.example.data.datasource.network.local.model.test.TestRequestBody
-import com.example.data.datasource.network.local.server.LocalServer
 import io.ktor.http.HttpMethod
 
-class TestRepository(
-    private val localService: LocalService,
-    private val localServer: LocalServer
-) {
+class TestRepository(private val localService: LocalService, private val nsd: NSD) {
 
     private val ipAddressToSend = mutableListOf<String>()
-
-    suspend fun testRequest() {
-        localService.testRequest(
-            httpMethod = HttpMethod.Post,
-            path = "/test",
-            queryParameters = arrayOf(),
-            requestBody = TestRequestBody(
-                test = "test",
-                sender = "sender: Bas"
-            )
-        )
-    }
 
     fun getIpAddressList() = ipAddressToSend
 
@@ -40,7 +25,7 @@ class TestRepository(
                 queryParameters = arrayOf(),
                 requestBody = TestRequestBody(
                     test = message,
-                    sender = ""
+                    sender = nsd.myServiceName
                 )
             )
         }

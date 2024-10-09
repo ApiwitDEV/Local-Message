@@ -2,6 +2,8 @@ package com.example.localmessage.feature.message.ui
 
 import android.content.res.Configuration
 import android.util.Log
+import androidx.activity.compose.LocalActivityResultRegistryOwner
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -16,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,6 +26,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -47,8 +51,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -303,9 +309,13 @@ private fun ServiceDetail(
     chatList: StateFlow<List<HistoryItemUIState>>
 ) {
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val activityResultRegistry = LocalActivityResultRegistryOwner.current?.activityResultRegistry
     val historyState = rememberHistoryState(chatList)
     val serviceActionState = rememberServiceActionState(
         scope = scope,
+        context = context,
+        activityResultRegistry = activityResultRegistry,
         onRequestClick = onRequestClick
     )
     var isShowDropdown by remember { mutableStateOf(false) }
@@ -365,46 +375,80 @@ private fun ServiceDetail(
 @Composable
 private fun ServiceAction(serviceActionStateHolder: ServiceActionStateHolder) {
     val uiState = serviceActionStateHolder.uiState.collectAsStateWithLifecycle().value
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Bottom
-    ) {
-        IconButton(
-            modifier = Modifier.scale(1.5f),
-            onClick = { /*TODO*/ }
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_image_24),
-                contentDescription = "pick image",
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-        Spacer(modifier = Modifier.width(16.dp))
-        OutlinedTextField(
-            modifier = Modifier
-                .weight(1f),
-            value = uiState,
-            onValueChange = serviceActionStateHolder::setText,
-            shape = RoundedCornerShape(25),
-            label = {
-                Text(text = "Message")
+    Column {
+        if (uiState?.isLoadingImage == true) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(80.dp),
+                    color = MaterialTheme.colorScheme.secondary,
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                )
+                IconButton(onClick = { serviceActionStateHolder.clearChosenImage() }) {
+                    Icon(painter = painterResource(id = R.drawable.baseline_close_24), contentDescription = "close")
+                }
             }
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        IconButton(
+        }
+        uiState?.image?.let {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Image(
+                    modifier = Modifier.fillMaxSize(0.2f),
+                    bitmap = it.asImageBitmap(),
+                    contentDescription = null
+                )
+                IconButton(onClick = { serviceActionStateHolder.clearChosenImage() }) {
+                    Icon(painter = painterResource(id = R.drawable.baseline_close_24), contentDescription = "close")
+                }
+            }
+        }
+        Row(
             modifier = Modifier
-                .scale(1.5f),
-            onClick = serviceActionStateHolder::testRequest
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom
         ) {
-            Icon(
-                modifier = Modifier.rotate(90f),
-                painter = painterResource(id = R.drawable.baseline_navigation_24),
-                contentDescription = "send request",
-                tint = MaterialTheme.colorScheme.primary
+            IconButton(
+                modifier = Modifier.scale(1f),
+                onClick = serviceActionStateHolder::chooseImage
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_image_24),
+                    contentDescription = "pick image",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            OutlinedTextField(
+                modifier = Modifier
+                    .weight(1f),
+                value = uiState?.message?:"",
+                onValueChange = serviceActionStateHolder::setText,
+                shape = RoundedCornerShape(25),
+                label = {
+                    Text(text = "Message")
+                }
             )
+            Spacer(modifier = Modifier.width(16.dp))
+            val isEnabled = (uiState?.message?.isNotBlank()?:false) || (uiState?.image != null)
+            IconButton(
+                enabled = isEnabled,
+                modifier = Modifier
+                    .scale(1f),
+                onClick = serviceActionStateHolder::testRequest
+            ) {
+                Icon(
+                    modifier = Modifier.rotate(90f),
+                    painter = painterResource(id = R.drawable.baseline_navigation_24),
+                    contentDescription = "send request",
+                    tint = if (isEnabled) MaterialTheme.colorScheme.primary else { Color.LightGray }
+                )
+            }
         }
     }
 }

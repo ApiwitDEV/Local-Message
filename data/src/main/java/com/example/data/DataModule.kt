@@ -4,6 +4,7 @@ import com.example.data.datasource.network.local.DNSBaseService
 import com.example.data.datasource.network.local.client.LocalService
 import com.example.data.datasource.network.local.client.NSD
 import com.example.data.datasource.network.local.server.LocalServer
+import com.example.data.repository.ImageRepository
 import com.example.data.repository.NSDRepository
 import com.example.data.repository.ServerRepository
 import com.example.data.repository.TestRepository
@@ -19,4 +20,5 @@ val dataModule = module {
     singleOf(::NSDRepository)
     singleOf(::TestRepository)
     singleOf(::ServerRepository)
+    singleOf(::ImageRepository)
 }

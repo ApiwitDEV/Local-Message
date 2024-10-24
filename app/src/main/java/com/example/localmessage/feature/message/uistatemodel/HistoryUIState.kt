@@ -1,5 +1,5 @@
 package com.example.localmessage.feature.message.uistatemodel
 
 data class HistoryUIState(
-    val historyList: List<HistoryItemUIState>
+    val historyList: List<ChatItemUIState>
 )

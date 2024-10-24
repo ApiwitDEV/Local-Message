@@ -1,6 +1,7 @@
 package com.example.data.repository
 
 import android.util.Log
+import com.example.data.datasource.network.local.model.test.ReceivedData
 import com.example.data.datasource.network.local.model.test.TestRequestBody
 import com.example.data.datasource.network.local.server.LocalServer
 import kotlinx.coroutines.CoroutineScope
@@ -22,7 +23,7 @@ class ServerRepository(
         }
     }
 
-    fun subscribeMessageFromOther(): SharedFlow<TestRequestBody> {
+    fun subscribeMessageFromOther(): SharedFlow<ReceivedData> {
         return localServer.server
     }
 

@@ -1,10 +1,12 @@
 package com.example.localmessage.feature.message.uistatemodel
 
 import android.graphics.Bitmap
-import android.net.Uri
 
-data class ServiceActionUIState(
+data class ChatItemUIState(
+    val id: Int?,
     val message: String?,
+    val sender: String?,
+    val type: String?,
     val image: Bitmap?,
-    val isLoadingImage: Boolean
+    val progress: Double?
 )

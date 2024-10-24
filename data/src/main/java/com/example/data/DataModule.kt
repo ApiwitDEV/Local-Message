@@ -7,7 +7,7 @@ import com.example.data.datasource.network.local.server.LocalServer
 import com.example.data.repository.ImageRepository
 import com.example.data.repository.NSDRepository
 import com.example.data.repository.ServerRepository
-import com.example.data.repository.TestRepository
+import com.example.data.repository.MessageRepository
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -18,7 +18,7 @@ val dataModule = module {
     singleOf(::DNSBaseService)
     singleOf(::LocalService)
     singleOf(::NSDRepository)
-    singleOf(::TestRepository)
+    singleOf(::MessageRepository)
     singleOf(::ServerRepository)
     singleOf(::ImageRepository)
 }

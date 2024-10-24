@@ -2,18 +2,18 @@ package com.example.localmessage.feature.message.stateholder
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import com.example.localmessage.feature.message.uistatemodel.HistoryItemUIState
+import com.example.localmessage.feature.message.uistatemodel.ChatItemUIState
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun rememberHistoryState(history: StateFlow<List<HistoryItemUIState>>): HistoryStateHolder {
+fun rememberChatListStateHolder(history: StateFlow<List<ChatItemUIState>>): HistoryStateHolder {
     return remember(history) {
         HistoryStateHolder(history)
     }
 }
 
 class HistoryStateHolder(
-    val history: StateFlow<List<HistoryItemUIState>>
+    val history: StateFlow<List<ChatItemUIState>>
 ) {
 
 }

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.serialization)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -71,5 +72,14 @@ dependencies {
     implementation(libs.ktor.serialization.gson)
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.server.content.negotiation)
+
+}
+
+dependencies {
+
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
 
 }

@@ -6,11 +6,16 @@ import com.example.data.bitmapToByteArray
 import com.example.data.datasource.network.local.client.LocalService
 import com.example.data.datasource.network.local.client.NSD
 import com.example.data.datasource.network.local.model.test.TestRequestBody
+import com.example.data.datasource.ondevice.database.chathistory.ChatDao
 import io.ktor.http.HttpMethod
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
-class MessageRepository(private val localService: LocalService, private val nsd: NSD) {
+class MessageRepository(
+    private val localService: LocalService,
+    private val nsd: NSD,
+    private val chatDao: ChatDao
+) {
 
     data class Message(
         val id: Int,

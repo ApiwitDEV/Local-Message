@@ -9,8 +9,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ServerRepository(
+@Singleton
+class ServerRepository @Inject constructor(
     private val localServer: LocalServer,
     private val chatDao: ChatDao
 ) {

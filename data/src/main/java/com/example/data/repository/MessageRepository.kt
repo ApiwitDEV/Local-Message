@@ -10,8 +10,11 @@ import com.example.data.datasource.ondevice.database.chathistory.ChatDao
 import io.ktor.http.HttpMethod
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class MessageRepository(
+@Singleton
+class MessageRepository @Inject constructor(
     private val localService: LocalService,
     private val nsd: NSD,
     private val chatDao: ChatDao

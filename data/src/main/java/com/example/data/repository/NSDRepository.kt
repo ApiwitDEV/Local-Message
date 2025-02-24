@@ -7,8 +7,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class NSDRepository(
+@Singleton
+class NSDRepository @Inject constructor(
     private val nsd: NSD,
     private val dnsBaseService: DNSBaseService
 ) {

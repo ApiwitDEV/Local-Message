@@ -66,6 +66,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.localmessage.R
 import com.example.localmessage.feature.message.stateholder.HistoryStateHolder
@@ -81,12 +82,11 @@ import com.example.localmessage.ui.AppUIStateHolder
 import com.example.localmessage.ui.theme.LocalMessageTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MessageScreen(
     appStateHolder: AppUIStateHolder,
-    viewModel: MessageViewModel = koinViewModel()
+    viewModel: MessageViewModel = hiltViewModel()
 ) {
     val scope = rememberCoroutineScope()
     LaunchedEffect(key1 = null) {

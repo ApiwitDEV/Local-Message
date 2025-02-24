@@ -10,8 +10,14 @@ import com.example.data.datasource.network.local.model.DiscoveryServiceResult
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class NSD(private val dnsBaseService: DNSBaseService, private val port: Int, private val context: Context) {
+class NSD @Inject constructor(
+    private val dnsBaseService: DNSBaseService,
+    private val port: Int,
+    private val context: Context
+) {
 
     private var nsdManager: NsdManager? = null
     private val httpTcpServiceType = "_http._tcp."

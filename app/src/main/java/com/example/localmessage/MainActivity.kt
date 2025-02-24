@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -31,12 +32,13 @@ import com.example.localmessage.ui.navigation.DestinationRoute
 import com.example.localmessage.ui.navigation.MainNavigation
 import com.example.localmessage.ui.rememberAppUIStateHolder
 import com.example.localmessage.ui.theme.LocalMessageTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val appViewModel by viewModel<AppViewModel>()
+    private val appViewModel by viewModels<AppViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

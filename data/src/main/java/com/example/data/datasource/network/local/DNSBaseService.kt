@@ -3,8 +3,11 @@ package com.example.data.datasource.network.local
 import com.example.data.datasource.network.local.model.DiscoveryServiceResult
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class DNSBaseService {
+@Singleton
+class DNSBaseService @Inject constructor() {
 
     private val serviceList = mutableListOf<DiscoveryServiceResult>()
 

@@ -22,4 +22,3 @@ dependencyResolutionManagement {
 rootProject.name = "Local Message"
 include(":app")
 include(":data")
-include(":domain")

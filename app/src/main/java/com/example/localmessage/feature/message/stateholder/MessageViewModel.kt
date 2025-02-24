@@ -10,6 +10,7 @@ import com.example.data.repository.MessageRepository
 import com.example.data.byteArrayToBitmap
 import com.example.localmessage.feature.message.uistatemodel.ChatItemUIState
 import com.example.localmessage.feature.message.uistatemodel.NSDServiceItemUIState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
@@ -22,8 +23,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MessageViewModel(
+@HiltViewModel
+class MessageViewModel @Inject constructor(
     nsdRepository: NSDRepository,
     private val messageRepository: MessageRepository,
     private val serverRepository: ServerRepository

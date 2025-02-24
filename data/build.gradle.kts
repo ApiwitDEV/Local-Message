@@ -3,11 +3,13 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.serialization)
     id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
+    id("kotlin-kapt")
 }
 
 android {
     namespace = "com.example.data"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 24
@@ -82,4 +84,13 @@ dependencies {
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
 
+}
+
+dependencies {
+    implementation(libs.hilt)
+    kapt(libs.hilt.android.compiler)
+}
+
+kapt {
+    correctErrorTypes = true
 }

@@ -23,8 +23,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class LocalServer(private val port: Int) {
+class LocalServer @Inject constructor(private val port: Int) {
 
     val server: SharedFlow<ReceivedData> by lazy {
         callbackFlow {

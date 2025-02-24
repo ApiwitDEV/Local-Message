@@ -34,8 +34,11 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class LocalService(private val dnsBaseService: DNSBaseService) {
+@Singleton
+class LocalService @Inject constructor(private val dnsBaseService: DNSBaseService) {
 
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
